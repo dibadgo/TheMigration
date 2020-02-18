@@ -1,5 +1,7 @@
 package com.example.dibadgo.TheMigration.model;
 
+import com.example.dibadgo.TheMigration.base.Credentials;
+
 import javax.validation.constraints.NotNull;
 
 public class CloudCredentials implements Credentials {

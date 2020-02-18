@@ -1,4 +1,4 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.base;
 
 public enum Cloud {
     AWS,

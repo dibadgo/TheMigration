@@ -1,14 +1,20 @@
 package com.example.dibadgo.TheMigration.model;
 
-import java.util.List;
+import com.example.dibadgo.TheMigration.base.Credentials;
+import com.example.dibadgo.TheMigration.base.IpAddress;
+import com.example.dibadgo.TheMigration.base.Volume;
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 
 public class Workload {
 
     private IpAddress ipAddress;
     private Credentials credentials;
-    private List<Volume> volumeList;
+    private ArrayList<Volume> volumeList;
 
-    public Workload(IpAddress ipAddress, Credentials credentials, List<Volume> volumeList) {
+    public Workload(IpAddress ipAddress, Credentials credentials, ArrayList<Volume> volumeList) {
         this.ipAddress = ipAddress;
         this.credentials = credentials;
         this.volumeList = volumeList;
@@ -26,11 +32,21 @@ public class Workload {
         this.credentials = credentials;
     }
 
-    public List<Volume> getVolumeList() {
+    public ArrayList<Volume> getVolumeList() {
         return volumeList;
     }
 
-    public void setVolumeList(List<Volume> volumeList) {
-        this.volumeList = volumeList;
+    public void addVolume(@NotNull Volume volume){
+        this.volumeList.add(volume);
+    }
+
+    @Nullable
+    public Volume getVolumeByMountPoint(@NotNull String mountPoint) {
+        for (Volume volume: volumeList) {
+            if (volume.getMountPoint().equals(mountPoint)) {
+                return volume;
+            }
+        }
+        return null;
     }
 }
