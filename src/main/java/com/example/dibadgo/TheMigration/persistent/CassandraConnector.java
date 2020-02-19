@@ -1,0 +1,32 @@
+package com.example.dibadgo.TheMigration.persistent;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.NotNull;
+
+public class CassandraConnector {
+    private Cluster cluster;
+
+    private Session session;
+
+    public void connect(@NotNull String node, @Nullable Integer port) {
+        Cluster.Builder b = Cluster.builder().addContactPoint(node);
+        if (port != null) {
+            b.withPort(port);
+        }
+        cluster = b.build();
+
+        session = cluster.connect();
+    }
+
+    public Session getSession() {
+        return this.session;
+    }
+
+    public void close() {
+        session.close();
+        cluster.close();
+    }
+}

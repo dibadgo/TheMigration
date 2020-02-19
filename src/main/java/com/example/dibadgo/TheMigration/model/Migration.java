@@ -8,8 +8,9 @@ import com.example.dibadgo.TheMigration.base.OsType;
 import com.example.dibadgo.TheMigration.base.State;
 import com.example.dibadgo.TheMigration.base.Volume;
 import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
+import com.example.dibadgo.TheMigration.persistent.base.StoredModel;
 
-public class Migration {
+public class Migration implements StoredModel {
 
     private UUID id;
     private ArrayList<String> selectedMountPoints;
@@ -47,7 +48,7 @@ public class Migration {
         cloneMountPoints();
     }
 
-    private void cloneMountPoints() throws LocalMigrationError{
+    private void cloneMountPoints() throws LocalMigrationError {
         Workload target = this.targetCloud.getTarget();
         for (String mountPoint : this.selectedMountPoints) {
             Volume sourceVolume = this.source.getVolumeByMountPoint(mountPoint);
@@ -65,5 +66,15 @@ public class Migration {
                 );
             }
         }
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

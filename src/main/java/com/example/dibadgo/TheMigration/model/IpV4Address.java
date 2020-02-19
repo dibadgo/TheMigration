@@ -11,9 +11,9 @@ public class IpV4Address implements IpAddress {
 
     private String ipAddress;
 
-    public IpV4Address(@NotNull String ipAddress) throws Exception {
+    public IpV4Address(@NotNull String ipAddress) throws RuntimeException {
         if (!IpV4Address.checkIpAddress(ipAddress)) {
-            throw new Exception("IP v4 should match with template 000.000.000.000");
+            throw new RuntimeException("IP v4 should match with template 000.000.000.000");
         }
 
         this.ipAddress = ipAddress;
@@ -24,6 +24,7 @@ public class IpV4Address implements IpAddress {
         return pattern.matcher(ipAddress).matches();
     }
 
+    @NotNull
     @Override
     public String getIpAddress() {
         return ipAddress;

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("message")
-public class Migration {
+public class MigrationController {
 
     @GetMapping
     public String list() {
