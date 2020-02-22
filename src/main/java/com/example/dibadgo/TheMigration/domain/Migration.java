@@ -1,16 +1,15 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.domain;
+
+import com.example.dibadgo.TheMigration.base.OsType;
+import com.example.dibadgo.TheMigration.base.State;
+import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-import com.example.dibadgo.TheMigration.base.OsType;
-import com.example.dibadgo.TheMigration.base.State;
-import com.example.dibadgo.TheMigration.base.Volume;
-import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
-import com.example.dibadgo.TheMigration.persistent.base.StoredModel;
 
-public class Migration implements StoredModel {
+public class Migration {
 
     private UUID id;
     private ArrayList<String> selectedMountPoints;
@@ -18,6 +17,9 @@ public class Migration implements StoredModel {
     private TargetCloud targetCloud;
     private State state;
     private OsType osType;
+
+    public Migration() {
+    }
 
     public Migration(UUID id,
                      String[] selectedMountPoints,
@@ -68,12 +70,10 @@ public class Migration implements StoredModel {
         }
     }
 
-    @Override
     public UUID getId() {
         return id;
     }
 
-    @Override
     public void setId(UUID id) {
         this.id = id;
     }

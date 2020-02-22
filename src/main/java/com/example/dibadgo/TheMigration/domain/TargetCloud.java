@@ -1,4 +1,4 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.domain;
 
 import com.example.dibadgo.TheMigration.base.Cloud;
 
@@ -6,11 +6,11 @@ public class TargetCloud {
 
     private Cloud targetCloud;
 
-    private CloudCredentials cloudCredentials;
+    private Credentials cloudCredentials;
 
     private Workload target;
 
-    public TargetCloud(Cloud targetCloud, CloudCredentials cloudCredentials, Workload target) {
+    public TargetCloud(Cloud targetCloud, Credentials cloudCredentials, Workload target) {
         this.targetCloud = targetCloud;
         this.cloudCredentials = cloudCredentials;
         this.target = target;
@@ -20,7 +20,7 @@ public class TargetCloud {
         return targetCloud;
     }
 
-    public CloudCredentials getCloudCredentials() {
+    public Credentials getCloudCredentials() {
         return cloudCredentials;
     }
 

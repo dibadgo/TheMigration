@@ -1,20 +1,18 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.domain;
 
-import com.example.dibadgo.TheMigration.base.Volume;
+import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
-public class WindowsVolume implements Volume {
-
-    /**
-     * The main mount point for Windows.
-     * If that point is not allowed - the migration cannot start
-     */
-    public static final String MAIN_MOUNT_POINT = "C:\\";
+@UserDefinedType("volume")
+public class Volume {
 
     private String mountPoint;
 
     private int totalSize;
 
-    public WindowsVolume(String mountPoint, int totalSize) {
+    public Volume() {
+    }
+
+    public Volume(String mountPoint, int totalSize) {
         this.mountPoint = mountPoint;
         this.totalSize = totalSize;
     }

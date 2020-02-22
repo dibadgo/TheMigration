@@ -1,10 +1,12 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.domain;
 
-import com.example.dibadgo.TheMigration.base.Credentials;
+import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import javax.validation.constraints.NotNull;
 
-public class CloudCredentials implements Credentials {
+@UserDefinedType("credentials")
+public class Credentials {
 
     /**
      * Field for account password
@@ -26,7 +28,7 @@ public class CloudCredentials implements Credentials {
      * @param username
      * @param domain
      */
-    public CloudCredentials(@NotNull String password, @NotNull String username, String domain) {
+    public Credentials(@NotNull String password, @NotNull String username, String domain) {
         this.password = password;
         this.username = username;
         this.domain = domain;
@@ -35,7 +37,6 @@ public class CloudCredentials implements Credentials {
     /**
      * @return
      */
-    @Override
     public String getUseName() {
         return username;
     }
@@ -45,7 +46,7 @@ public class CloudCredentials implements Credentials {
      *
      * @param userName Username should not be null
      */
-    @Override
+
     public void setUseName(@NotNull String userName) {
         this.username = userName;
     }
@@ -53,22 +54,18 @@ public class CloudCredentials implements Credentials {
     /**
      * @return
      */
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
     public void setPassword(@NotNull String password) {
         this.password = password;
     }
 
-    @Override
     public String getDomain() {
         return domain;
     }
 
-    @Override
     public void setDomain(String domain) {
         this.domain = domain;
     }

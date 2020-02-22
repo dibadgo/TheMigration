@@ -1,18 +1,21 @@
-package com.example.dibadgo.TheMigration.model;
+package com.example.dibadgo.TheMigration.domain;
 
-import com.example.dibadgo.TheMigration.base.IpAddress;
-
+import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
-public class IpV4Address implements IpAddress {
+@UserDefinedType(value = "IpV4Address")
+public class IpAddress {
 
     private static final String REG_EX = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
 
     private String ipAddress;
 
-    public IpV4Address(@NotNull String ipAddress) throws RuntimeException {
-        if (!IpV4Address.checkIpAddress(ipAddress)) {
+    public IpAddress() {
+    }
+
+    public IpAddress(@NotNull String ipAddress) throws RuntimeException {
+        if (!IpAddress.checkIpAddress(ipAddress)) {
             throw new RuntimeException("IP v4 should match with template 000.000.000.000");
         }
 
@@ -25,7 +28,6 @@ public class IpV4Address implements IpAddress {
     }
 
     @NotNull
-    @Override
     public String getIpAddress() {
         return ipAddress;
     }
