@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
+import org.springframework.data.cassandra.config.CassandraEntityClassScanner;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
 import org.springframework.data.cassandra.core.cql.keyspace.DropKeyspaceSpecification;
@@ -43,11 +44,13 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     }
 
     @Bean
-    public CassandraMappingContext cassandraMapping() throws NullPointerException {
+    public CassandraMappingContext cassandraMapping() throws NullPointerException, ClassNotFoundException {
         CassandraMappingContext ctx = new CassandraMappingContext();
         Cluster cluster = cluster().getObject();
-        if (cluster != null)
+        if (cluster != null) {
+            ctx.setInitialEntitySet(CassandraEntityClassScanner.scan("com.example.dibadgo.TheMigration.domain"));
             ctx.setUserTypeResolver(new SimpleUserTypeResolver(cluster, key_space));
+        }
          else
             throw new NullPointerException("Cannot resolve Cluster");
         return ctx;
@@ -80,5 +83,15 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Override
     protected String getKeyspaceName() {
         return key_space;
+    }
+
+    @Override
+    protected String getContactPoints() {
+        return this.contactPoints;
+    }
+
+    @Override
+    protected int getPort() {
+        return this.port;
     }
 }

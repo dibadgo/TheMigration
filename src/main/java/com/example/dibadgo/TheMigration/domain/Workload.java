@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Table("workloads")
@@ -16,20 +17,26 @@ public class Workload {
     @PrimaryKey
     @CassandraType(type = DataType.Name.UUID)
     private UUID id;
-    private IpAddress ipAddress;
+
+    @CassandraType(type = DataType.Name.TEXT)
+    private String ipAddress;
+
+    @CassandraType(type = DataType.Name.UDT, userTypeName = "credentials")
     private Credentials credentials;
-    private ArrayList<Volume> volumeList;
+
+    @CassandraType(type = DataType.Name.UDT, userTypeName = "volume")
+    private List<Volume> volumeList;
 
     public Workload() {
     }
 
-    public Workload(IpAddress ipAddress, Credentials credentials, ArrayList<Volume> volumeList) {
+    public Workload(String ipAddress, Credentials credentials, ArrayList<Volume> volumeList) {
         this.ipAddress = ipAddress;
         this.credentials = credentials;
         this.volumeList = volumeList;
     }
 
-    public Workload(UUID id, IpAddress ipAddress, Credentials credentials, ArrayList<Volume> volumeList) {
+    public Workload(UUID id, String ipAddress, Credentials credentials, ArrayList<Volume> volumeList) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.credentials = credentials;
@@ -44,7 +51,7 @@ public class Workload {
         this.id = id;
     }
 
-    public IpAddress getIpAddress() {
+    public String getIpAddress() {
         return ipAddress;
     }
 
@@ -56,7 +63,7 @@ public class Workload {
         this.credentials = credentials;
     }
 
-    public ArrayList<Volume> getVolumeList() {
+    public List<Volume> getVolumeList() {
         return volumeList;
     }
 
