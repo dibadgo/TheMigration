@@ -3,7 +3,7 @@ package com.example.dibadgo.TheMigration.base;
 import javax.validation.constraints.NotNull;
 
 public enum OsType {
-    WINDOWS("C:\\"),
+    WINDOWS("C:"),
     LINUX("/"),
     MAC("/");
 
@@ -15,6 +15,6 @@ public enum OsType {
 
     @NotNull
     public String getMountPoint() {
-        return mountPoint.toUpperCase();
+        return mountPoint.toLowerCase();
     }
 }

@@ -31,8 +31,7 @@ public class WorkloadController {
     @GetMapping("/{id}")
     public ResponseEntity<Workload> get(@PathVariable UUID id) {
         var workload = workloadService.get(id);
-        return workload.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(workload);
     }
 
     @PostMapping("/save")

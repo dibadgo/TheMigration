@@ -15,13 +15,16 @@ import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
 import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.core.mapping.SimpleUserTypeResolver;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+
 import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = {"classpath:application.properties"})
 @EnableCassandraRepositories(basePackages = "com.example.dibadgo.TheMigration.repositoryes")
 public class CassandraConfig extends AbstractCassandraConfiguration {
+
+    private static final String DOMAIN_FOLDER = "com.example.dibadgo.TheMigration.domain";
 
     @Value("${spring.data.cassandra.keyspace-name}")
     private String key_space;
@@ -48,10 +51,9 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         CassandraMappingContext ctx = new CassandraMappingContext();
         Cluster cluster = cluster().getObject();
         if (cluster != null) {
-            ctx.setInitialEntitySet(CassandraEntityClassScanner.scan("com.example.dibadgo.TheMigration.domain"));
+            ctx.setInitialEntitySet(CassandraEntityClassScanner.scan(DOMAIN_FOLDER));
             ctx.setUserTypeResolver(new SimpleUserTypeResolver(cluster, key_space));
-        }
-         else
+        } else
             throw new NullPointerException("Cannot resolve Cluster");
         return ctx;
     }
@@ -77,7 +79,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 
     @Override
     public String[] getEntityBasePackages() {
-        return new String[]{"com.example.dibadgo.TheMigration.domain"};
+        return new String[]{DOMAIN_FOLDER};
     }
 
     @Override

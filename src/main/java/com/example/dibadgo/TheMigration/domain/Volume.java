@@ -33,8 +33,8 @@ public class Volume {
         this.totalSize = totalSize;
     }
 
-    @Override
-    public Volume clone() throws CloneNotSupportedException {
-        return (Volume) super.clone();
+
+    public Volume cloneVolume() {
+        return new Volume(mountPoint, totalSize);
     }
 }
