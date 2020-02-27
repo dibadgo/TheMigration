@@ -4,20 +4,46 @@ import com.example.dibadgo.TheMigration.base.State;
 import com.example.dibadgo.TheMigration.dataSource.MigrationDataSource;
 import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+
+/**
+ * Class wrap the process of migration in background
+ *
+ * @author Artyom
+ */
 public class MigrationRunner implements Runnable {
 
+    /**
+     * Time of delay migration in minutes
+     */
     private final static int MIGRATION_TIME_MIN = 5;
-
+    /**
+     * Migration DataSource
+     */
     private MigrationDataSource service;
+    /**
+     * Instance of migration
+     */
     private Migration migration;
 
-    public MigrationRunner(MigrationDataSource service, Migration migration) {
+    /**
+     * Constructor
+     *
+     * @param service   Migration DataSource
+     * @param migration Instance of migration to run
+     * @see MigrationRunner#service
+     * @see MigrationRunner#migration
+     */
+    public MigrationRunner(@NotNull MigrationDataSource service, @NotNull  Migration migration) {
         this.service = service;
         this.migration = migration;
     }
 
+    /**
+     * Will run the migration in background thread
+     */
     @Override
     public void run() {
         try {
@@ -32,7 +58,7 @@ public class MigrationRunner implements Runnable {
             migration.setEndTime(new Date());
             service.update(migration);
             log("Migration completed successfully");
-        } catch (LocalMigrationError | InterruptedException migrationError) {
+        } catch (LocalMigrationError migrationError) {
             migration.setState(State.ERROR);
             migration.setErrorMessage(migrationError.getMessage());
             migration.setEndTime(new Date());
@@ -46,6 +72,11 @@ public class MigrationRunner implements Runnable {
         }
     }
 
+    /**
+     * Method for logging the migration by pattern "Migration %Migration id%: message "
+     *
+     * @param message text to logging
+     */
     private void log(String message) {
         String errorMessage = String.format(
                 "Migration %s: %s",

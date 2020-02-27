@@ -24,9 +24,11 @@ public class Credentials {
     private String domain;
 
     /**
-     * @param password
-     * @param username
-     * @param domain
+     * Constructor
+     *
+     * @param password Password
+     * @param username Username
+     * @param domain   Domain
      */
     public Credentials(@NotNull String password, @NotNull String username, String domain) {
         this.password = password;
@@ -35,7 +37,7 @@ public class Credentials {
     }
 
     /**
-     * @return
+     * @return User name
      */
     public String getUseName() {
         return username;
@@ -52,7 +54,7 @@ public class Credentials {
     }
 
     /**
-     * @return
+     * @return Password
      */
     public String getPassword() {
         return password;

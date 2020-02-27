@@ -1,8 +1,5 @@
 package com.example.dibadgo.TheMigration.controllers;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.example.dibadgo.TheMigration.dataSource.WorkloadDataSource;
 import com.example.dibadgo.TheMigration.domain.Workload;
 import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
@@ -12,6 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Spring REST controller to manage Workloads
+ */
 @RestController
 @RequestMapping("workload")
 public class WorkloadController {
@@ -23,20 +26,38 @@ public class WorkloadController {
         this.workloadService = workloadService;
     }
 
+    /**
+     * List of Workloads
+     *
+     * @return workloads
+     */
     @GetMapping
     public ResponseEntity<List<Workload>> list() {
         return ResponseEntity.ok(workloadService.getAll());
     }
 
+    /**
+     * Get a Workload by Id
+     *
+     * @param id Workload Id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Workload> get(@PathVariable UUID id) {
         var workload = workloadService.get(id);
         return ResponseEntity.ok(workload);
     }
 
+    /**
+     * Create or update Workload
+     *
+     * @param workload Workload model
+     * @return Workload
+     * @see Workload
+     */
     @PostMapping("/save")
     public ResponseEntity<Workload> saveWorkload(@RequestBody Workload workload) {
-        try{
+        try {
             Workload savedWorkload = workloadService.saveWorkload(workload);
             return ResponseEntity.ok(savedWorkload);
         } catch (WorkloadException workloadException) {
@@ -48,6 +69,12 @@ public class WorkloadController {
         }
     }
 
+    /**
+     * Remove Workload
+     *
+     * @param id Workload Id
+     * @return Result message
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteWorkload(@PathVariable UUID id) {
         workloadService.delete(id);
