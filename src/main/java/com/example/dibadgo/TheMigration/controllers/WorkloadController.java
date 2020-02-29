@@ -2,12 +2,9 @@ package com.example.dibadgo.TheMigration.controllers;
 
 import com.example.dibadgo.TheMigration.dataSource.WorkloadDataSource;
 import com.example.dibadgo.TheMigration.domain.Workload;
-import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +37,7 @@ public class WorkloadController {
      * Get a Workload by Id
      *
      * @param id Workload Id
-     * @return
+     * @return Workload
      */
     @GetMapping("/{id}")
     public ResponseEntity<Workload> get(@PathVariable UUID id) {
@@ -55,18 +52,10 @@ public class WorkloadController {
      * @return Workload
      * @see Workload
      */
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<Workload> saveWorkload(@RequestBody Workload workload) {
-        try {
-            Workload savedWorkload = workloadService.saveWorkload(workload);
-            return ResponseEntity.ok(savedWorkload);
-        } catch (WorkloadException workloadException) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    workloadException.getMessage(),
-                    workloadException // It is wrong way to deliver the internal exception to the clients. Only debug.
-            );
-        }
+        Workload savedWorkload = workloadService.saveWorkload(workload);
+        return ResponseEntity.ok(savedWorkload);
     }
 
     /**
@@ -78,6 +67,8 @@ public class WorkloadController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteWorkload(@PathVariable UUID id) {
         workloadService.delete(id);
-        return ResponseEntity.ok("Workload successfully removed");
+
+        String message = String.format("Workload %s successfully removed", id.toString());
+        return ResponseEntity.ok(message);
     }
 }

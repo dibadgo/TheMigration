@@ -3,8 +3,7 @@ package com.example.dibadgo.TheMigration.services;
 import com.example.dibadgo.TheMigration.dataSource.WorkloadDataSource;
 import com.example.dibadgo.TheMigration.domain.Workload;
 import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
-import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.InstancePersistentNotFoundException;
-import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.PersistentException;
+import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.InstanceNotFoundException;
 import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.PersistentExceptionSupplier;
 import com.example.dibadgo.TheMigration.repositoryes.WorkloadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +43,12 @@ public class WorkloadService implements WorkloadDataSource {
      *
      * @param id Workload Id
      * @return Workload
-     * @throws InstancePersistentNotFoundException Exception if workload not found
+     * @throws InstanceNotFoundException Exception if workload not found
      */
     @Override
-    public Workload get(@NotNull UUID id) throws InstancePersistentNotFoundException {
+    public Workload get(@NotNull UUID id) throws InstanceNotFoundException {
         return workloadRepository.findById(id)
-                .orElseThrow(new PersistentExceptionSupplier(new InstancePersistentNotFoundException(id)));
+                .orElseThrow(new PersistentExceptionSupplier(new InstanceNotFoundException(id)));
     }
 
     /**
@@ -58,9 +57,12 @@ public class WorkloadService implements WorkloadDataSource {
      * @return Workload List
      */
     @Override
-    public List<Workload> getAll() {
-        List<Workload> list = new ArrayList<Workload>();
+    public List<Workload> getAll() throws InstanceNotFoundException {
+        List<Workload> list = new ArrayList<>();
         workloadRepository.findAll().forEach(list::add);
+        if (list.isEmpty()) {
+            throw new InstanceNotFoundException("Here is no Workloads");
+        }
         return list;
     }
 
@@ -79,7 +81,7 @@ public class WorkloadService implements WorkloadDataSource {
                 throw new WorkloadException("You cannot modify an existing IP address on existing source");
         } else {
             if (checkIpAddress(workload.getIpAddress())) {
-                throw new PersistentException("The source with the same IP is already exists");
+                throw new WorkloadException("The source with the same IP is already exists");
             }
             workload.setId(UUID.randomUUID());
         }
@@ -92,7 +94,10 @@ public class WorkloadService implements WorkloadDataSource {
      *
      * @param id Workload Id
      */
-    public void delete(UUID id) {
+    public void delete(UUID id) throws InstanceNotFoundException {
+        if (!workloadRepository.existsById(id)) {
+            throw new InstanceNotFoundException(id);
+        }
         workloadRepository.deleteById(id);
     }
 

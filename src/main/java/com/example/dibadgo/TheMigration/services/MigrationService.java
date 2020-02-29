@@ -1,18 +1,19 @@
 package com.example.dibadgo.TheMigration.services;
 
+import com.example.dibadgo.TheMigration.base.State;
 import com.example.dibadgo.TheMigration.dataSource.MigrationDataSource;
-import com.example.dibadgo.TheMigration.domain.Migration;
-import com.example.dibadgo.TheMigration.domain.MigrationBind;
-import com.example.dibadgo.TheMigration.domain.TargetCloud;
-import com.example.dibadgo.TheMigration.domain.Workload;
-import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.InstancePersistentNotFoundException;
+import com.example.dibadgo.TheMigration.dataSource.WorkloadDataSource;
+import com.example.dibadgo.TheMigration.domain.*;
+import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
+import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
+import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.InstanceNotFoundException;
 import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.PersistentExceptionSupplier;
 import com.example.dibadgo.TheMigration.repositoryes.MigrationRepository;
-import com.example.dibadgo.TheMigration.repositoryes.WorkloadRepository;
-import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,20 +36,20 @@ public class MigrationService implements MigrationDataSource {
     /**
      * Workload repository (Data store)
      *
-     * @see WorkloadRepository
+     * @see WorkloadService
      */
-    private WorkloadRepository workloadRepository;
+    private WorkloadDataSource workloadService;
 
     /**
      * Constructor
      *
      * @param migrationRepository Migration repository (Data store)
-     * @param workloadRepository  Workload repository (Data store)
+     * @param workloadService     Workload service (Data source)
      */
     @Autowired
-    public MigrationService(MigrationRepository migrationRepository, WorkloadRepository workloadRepository) {
+    public MigrationService(MigrationRepository migrationRepository, WorkloadService workloadService) {
         this.migrationRepository = migrationRepository;
-        this.workloadRepository = workloadRepository;
+        this.workloadService = workloadService;
     }
 
     /**
@@ -59,6 +60,7 @@ public class MigrationService implements MigrationDataSource {
      * @see MigrationBind
      */
     @NotNull
+    @Override
     public Migration create(@NotNull MigrationBind migrationBind) {
         Migration migration = makeMigrationFrom(migrationBind);
         migration.setId(UUID.randomUUID());
@@ -75,15 +77,14 @@ public class MigrationService implements MigrationDataSource {
      * @return Updated Migration model
      */
     @NotNull
+    @Override
     public Migration update(@NotNull UUID migrationId, @NotNull MigrationBind migrationBind) {
+        if (!migrationRepository.existsById(migrationId)) {
+            throw new InstanceNotFoundException(migrationId);
+        }
+
         Migration migration = makeMigrationFrom(migrationBind);
         migration.setId(migrationId);
-
-        Migration existMigration = migrationRepository.findById(migrationId)
-                .orElseThrow(new PersistentExceptionSupplier(
-                                String.format("The migration with ID %s was not found", migrationId.toString())
-                        )
-                );
 
         return migrationRepository.save(migration);
     }
@@ -98,13 +99,14 @@ public class MigrationService implements MigrationDataSource {
      * @return Updated migration
      */
     @NotNull
-    public Migration update(@NotNull Migration migration) {
+    @Override
+    public Migration update(@NotNull Migration migration) throws WorkloadException {
 
         Workload source = migration.getSource();
         Workload target = migration.getTargetCloud().getTarget();
 
-        workloadRepository.save(source);
-        workloadRepository.save(target);
+        workloadService.saveWorkload(source);
+        workloadService.saveWorkload(target);
 
         return migrationRepository.save(migration);
     }
@@ -114,11 +116,12 @@ public class MigrationService implements MigrationDataSource {
      *
      * @param migrationId Migration id
      * @return Migration model
-     * @throws InstancePersistentNotFoundException
+     * @throws InstanceNotFoundException Exception, If the migration not found
      */
-    public Migration get(@NotNull UUID migrationId) throws InstancePersistentNotFoundException {
+    @Override
+    public Migration get(@NotNull UUID migrationId) throws InstanceNotFoundException {
         Migration migration = migrationRepository.findById(migrationId)
-                .orElseThrow(new PersistentExceptionSupplier(new InstancePersistentNotFoundException(migrationId)));
+                .orElseThrow(new PersistentExceptionSupplier(new InstanceNotFoundException(migrationId)));
         loadWorkloadFor(migration);
         return migration;
     }
@@ -130,10 +133,13 @@ public class MigrationService implements MigrationDataSource {
      */
     @Override
     public List<Migration> getAll() {
-        List<Migration> list = new ArrayList<Migration>();
+        List<Migration> list = new ArrayList<>();
         for (Migration migration : migrationRepository.findAll()) {
             loadWorkloadFor(migration);
             list.add(migration);
+        }
+        if (list.isEmpty()) {
+            throw new InstanceNotFoundException("Here is no Migrations");
         }
         return list;
     }
@@ -143,21 +149,32 @@ public class MigrationService implements MigrationDataSource {
      *
      * @param id Migration id
      */
+    @Override
     public void delete(@NotNull UUID id) {
         migrationRepository.deleteById(id);
     }
 
+    @Override
+    public void run(UUID migrationId, ThreadPoolTaskExecutor taskExecutor) {
+        Migration migration = this.get(migrationId);
+        if (migration.getState() != State.PENDING)
+            throw new LocalMigrationError("Cannot start the migration when state is not pending");
+
+        MigrationRunner migrationRunner = new MigrationRunner(this, migration);
+        taskExecutor.execute(migrationRunner);
+    }
+
     private void loadWorkloadFor(@NotNull Migration migration) {
-        Workload source = workloadRepository.findById(migration.getSourceId()).orElseThrow();
+        Workload source = workloadService.get(migration.getSourceId());
         migration.setSource(source);
 
-        Workload target = workloadRepository.findById(migration.getTargetCloud().getTargetId()).orElseThrow();
+        Workload target = workloadService.get(migration.getTargetCloud().getTargetId());
         migration.getTargetCloud().setTarget(target);
     }
 
     private Migration makeMigrationFrom(@NotNull MigrationBind migrationBind) {
-        Workload source = workloadRepository.findById(migrationBind.getSourceId()).orElseThrow();
-        Workload target = workloadRepository.findById(migrationBind.getTargetId()).orElseThrow();
+        Workload source = workloadService.get(migrationBind.getSourceId());
+        Workload target = workloadService.get(migrationBind.getTargetId());
 
         TargetCloud targetCloud = new TargetCloud(
                 migrationBind.getTargetCloud(),

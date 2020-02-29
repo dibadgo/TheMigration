@@ -44,15 +44,7 @@ public class MigrationController {
      */
     @PostMapping("/create")
     public ResponseEntity<Migration> createMigration(@RequestBody MigrationBind bind) {
-        try {
-            return ResponseEntity.ok(migrationDataSource.create(bind));
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage(),
-                    e // It is wrong way delivers the internal exception to the clients. Only debug.
-            );
-        }
+        return ResponseEntity.ok(migrationDataSource.create(bind));
     }
 
     /**
@@ -75,16 +67,7 @@ public class MigrationController {
      */
     @GetMapping("/run/{id}")
     public ResponseEntity<String> run(@PathVariable UUID id) {
-        Migration migration = migrationDataSource.get(id);
-        if (migration.getState() != State.PENDING) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Cannot start the migration when state is not pending"
-            );
-        }
-
-        MigrationRunner migrationRunner = new MigrationRunner(migrationDataSource, migration);
-        taskExecutor.execute(migrationRunner);
+       migrationDataSource.run(id, taskExecutor);
 
         return ResponseEntity.ok("The migration process started. " +
                 "Check out migration/id method to observe on the status");
@@ -105,7 +88,7 @@ public class MigrationController {
      *
      * @param id   Migration Id
      * @param bind Bind model which will transform to migrations
-     * @return
+     * @return updated Migration model
      * @see MigrationBind
      */
     @PutMapping("/{id}")

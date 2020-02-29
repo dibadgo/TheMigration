@@ -36,7 +36,7 @@ public class MigrationRunner implements Runnable {
      * @see MigrationRunner#service
      * @see MigrationRunner#migration
      */
-    public MigrationRunner(@NotNull MigrationDataSource service, @NotNull  Migration migration) {
+    public MigrationRunner(@NotNull MigrationDataSource service, @NotNull Migration migration) {
         this.service = service;
         this.migration = migration;
     }
@@ -58,15 +58,15 @@ public class MigrationRunner implements Runnable {
             migration.setEndTime(new Date());
             service.update(migration);
             log("Migration completed successfully");
-        } catch (LocalMigrationError migrationError) {
+        } catch (RuntimeException exception) {
             migration.setState(State.ERROR);
-            migration.setErrorMessage(migrationError.getMessage());
+            migration.setErrorMessage(exception.getMessage());
             migration.setEndTime(new Date());
             service.update(migration);
 
             String errorMessage = String.format(
                     "Error while running migration: %s",
-                    migrationError.getMessage()
+                    exception.getMessage()
             );
             log(errorMessage);
         }

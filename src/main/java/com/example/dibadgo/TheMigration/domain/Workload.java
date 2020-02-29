@@ -1,6 +1,7 @@
 package com.example.dibadgo.TheMigration.domain;
 
 import com.datastax.driver.core.DataType;
+import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
@@ -71,7 +72,10 @@ public class Workload {
         this.volumeList = new ArrayList<>();
     }
 
+    @NotNull
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 
@@ -99,13 +103,24 @@ public class Workload {
      * Add volume to storage
      *
      * @param volume Volume to add
+     * @throws WorkloadException Throws, if mount point already exists on the volume
      * @see Volume
      */
-    public void addVolume(@NotNull Volume volume) {
+    public void addVolume(@NotNull Volume volume) throws WorkloadException {
         if (this.volumeList == null) {
             this.volumeList = new ArrayList<>();
         }
-        this.volumeList.add(volume);
+
+        if (this.getVolumeByMountPoint(volume.getMountPoint()) == null)
+            this.volumeList.add(volume);
+        else {
+            String errorMessage = String.format(
+                    "The volume with mount point %s is already exists in Workload %s",
+                    volume.getMountPoint(),
+                    this.getId().toString()
+            );
+            throw new WorkloadException(errorMessage);
+        }
     }
 
     /**

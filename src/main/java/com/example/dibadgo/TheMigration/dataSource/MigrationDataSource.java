@@ -2,6 +2,7 @@ package com.example.dibadgo.TheMigration.dataSource;
 
 import com.example.dibadgo.TheMigration.domain.Migration;
 import com.example.dibadgo.TheMigration.domain.MigrationBind;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,4 +20,6 @@ public interface MigrationDataSource {
     Migration get(UUID migrationId);
 
     List<Migration> getAll();
+
+    void run(UUID migrationId, ThreadPoolTaskExecutor taskExecutor);
 }
