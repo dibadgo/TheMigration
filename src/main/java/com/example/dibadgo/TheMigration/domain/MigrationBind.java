@@ -12,17 +12,17 @@ import java.util.UUID;
  */
 public class MigrationBind {
     /**
-     * Source Workload Id
+     * Source Workload IP
      *
      * @see Workload
      */
-    private UUID sourceId;
+    private String sourceWorkloadIp;
     /**
-     * Target Workload Id
+     * Target Workload IP
      *
      * @see Workload
      */
-    private UUID targetId;
+    private String targetWorkloadIp;
     /**
      * Target cloud type
      *
@@ -54,9 +54,9 @@ public class MigrationBind {
 
     }
 
-    public MigrationBind(UUID sourceId, UUID targetId, Cloud targetCloud, Credentials cloudCredentials, String[] mountPoints, OsType osType, State state) {
-        this.sourceId = sourceId;
-        this.targetId = targetId;
+    public MigrationBind(String sourceId, String targetId, Cloud targetCloud, Credentials cloudCredentials, String[] mountPoints, OsType osType, State state) {
+        this.sourceWorkloadIp = sourceId;
+        this.targetWorkloadIp = targetId;
         this.targetCloud = targetCloud;
         this.cloudCredentials = cloudCredentials;
         this.mountPoints = mountPoints;
@@ -65,21 +65,21 @@ public class MigrationBind {
     }
 
     /**
-     * Source Id getter
+     * Source IP getter
      *
      * @return UUID of source
      */
-    public UUID getSourceId() {
-        return sourceId;
+    public String getSourceWorkloadIp() {
+        return sourceWorkloadIp;
     }
 
     /**
-     * Target Id getter
+     * Target IP getter
      *
      * @return target UUID
      */
-    public UUID getTargetId() {
-        return targetId;
+    public String getTargetWorkloadIp() {
+        return targetWorkloadIp;
     }
 
     /**

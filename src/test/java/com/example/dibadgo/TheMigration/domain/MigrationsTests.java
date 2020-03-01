@@ -3,7 +3,6 @@ package com.example.dibadgo.TheMigration.domain;
 import com.example.dibadgo.TheMigration.base.Cloud;
 import com.example.dibadgo.TheMigration.base.OsType;
 import com.example.dibadgo.TheMigration.base.State;
-import com.example.dibadgo.TheMigration.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

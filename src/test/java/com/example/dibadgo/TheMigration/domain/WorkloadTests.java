@@ -1,8 +1,5 @@
 package com.example.dibadgo.TheMigration.domain;
 
-import com.example.dibadgo.TheMigration.domain.Credentials;
-import com.example.dibadgo.TheMigration.domain.Volume;
-import com.example.dibadgo.TheMigration.domain.Workload;
 import com.example.dibadgo.TheMigration.exceptions.WorkloadException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

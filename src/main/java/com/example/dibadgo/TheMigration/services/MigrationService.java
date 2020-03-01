@@ -178,8 +178,8 @@ public class MigrationService implements MigrationDataSource {
     }
 
     private Migration makeMigrationFrom(@NotNull MigrationBind migrationBind) {
-        Workload source = workloadService.get(migrationBind.getSourceId());
-        Workload target = workloadService.get(migrationBind.getTargetId());
+        Workload source = workloadService.getWorkloadByIp(migrationBind.getSourceWorkloadIp());
+        Workload target = workloadService.getWorkloadByIp(migrationBind.getTargetWorkloadIp());
 
         TargetCloud targetCloud = new TargetCloud(
                 migrationBind.getTargetCloud(),
@@ -191,7 +191,7 @@ public class MigrationService implements MigrationDataSource {
 
         var migration = new Migration(
                 migrationBind.getMountPoints(),
-                migrationBind.getSourceId(),
+                source.getId(),
                 targetCloud,
                 migrationBind.getState(),
                 migrationBind.getOsType()

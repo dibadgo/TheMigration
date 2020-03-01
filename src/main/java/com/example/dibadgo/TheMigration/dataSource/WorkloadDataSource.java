@@ -16,4 +16,6 @@ public interface WorkloadDataSource {
     Workload saveWorkload(Workload workload) throws WorkloadException;
 
     void delete(UUID id) throws InstanceNotFoundException;
+
+    Workload getWorkloadByIp(String ip);
 }

@@ -7,6 +7,7 @@ import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.InstanceN
 import com.example.dibadgo.TheMigration.repositoryes.ExceptionSupplier.PersistentExceptionSupplier;
 import com.example.dibadgo.TheMigration.repositoryes.WorkloadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -87,6 +88,23 @@ public class WorkloadService implements WorkloadDataSource {
         }
 
         return workloadRepository.save(workload);
+    }
+
+    /**
+     * Search the workload by IP address
+     *
+     * @param ip IP address (111.111.111.111)
+     * @return Workload model or null
+     */
+    @Nullable
+    @Override
+    public Workload getWorkloadByIp(String ip) {
+        for (Workload workload : workloadRepository.findAll()) {
+            if (workload.getIpAddress().equals(ip)) {
+                return workload;
+            }
+        }
+        return null;
     }
 
     /**

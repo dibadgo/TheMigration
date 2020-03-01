@@ -47,7 +47,7 @@ public class WorkloadServiceTests {
         Mockito.when(workloadRepository.save(workload))
                 .thenReturn(workload);
 
-        Workload savedWorkload =  workloadDataSource.saveWorkload(workload);
+        Workload savedWorkload = workloadDataSource.saveWorkload(workload);
 
         Assertions.assertNotNull(savedWorkload.getId());
         Mockito.verify(workloadRepository, Mockito.times(1)).save(workload);

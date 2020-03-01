@@ -41,17 +41,17 @@ public class MigrationServiceTests {
     @Test
     public void createShouldSetIdAndSaveToDb() {
         MigrationBind bind = new MigrationBind(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
+                "192.168.0.1",
+                "192.168.0.2",
                 Cloud.AWS, new Credentials("passwd", "usr", ""),
                 new String[]{"c:"},
                 OsType.WINDOWS,
                 State.PENDING
         );
 
-        Workload workload = new Workload();
+        Workload workload = Mockito.mock(Workload.class);
 
-        Mockito.when(workloadService.get(Mockito.any(UUID.class))).thenReturn(workload);
+        Mockito.when(workloadService.getWorkloadByIp(Mockito.any(String.class))).thenReturn(workload);
         Mockito.when(migrationRepository.save(Mockito.any(Migration.class))).thenAnswer(new Answer<Migration>() {
             @Override
             public Migration answer(InvocationOnMock invocation) throws Throwable {
@@ -69,8 +69,8 @@ public class MigrationServiceTests {
     public void updateMigrationShouldInvokeUpdateMethod() {
         UUID migrationId = UUID.randomUUID();
         MigrationBind bind = new MigrationBind(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
+                "192.168.0.1",
+                "192.168.0.2",
                 Cloud.AWS, new Credentials("passwd", "usr", ""),
                 new String[]{"c:"},
                 OsType.WINDOWS,
@@ -88,7 +88,7 @@ public class MigrationServiceTests {
         });
 
         Workload workload = new Workload();
-        Mockito.when(workloadService.get(Mockito.any(UUID.class))).thenReturn(workload);
+        Mockito.when(workloadService.getWorkloadByIp(Mockito.any(String.class))).thenReturn(workload);
 
         Migration migration = migrationDataSource.update(migrationId, bind);
 
@@ -121,7 +121,7 @@ public class MigrationServiceTests {
     }
 
     @Test
-    public void deleteShouldInvokePersistanceLayer() {
+    public void deleteShouldInvokePersistenceLayer() {
         Mockito.doNothing().when(migrationRepository).deleteById(Mockito.any(UUID.class));
         migrationDataSource.delete(UUID.randomUUID());
         Mockito.verify(migrationRepository, Mockito.times(1)).deleteById(Mockito.any(UUID.class));
