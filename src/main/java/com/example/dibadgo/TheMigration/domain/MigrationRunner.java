@@ -2,7 +2,6 @@ package com.example.dibadgo.TheMigration.domain;
 
 import com.example.dibadgo.TheMigration.base.State;
 import com.example.dibadgo.TheMigration.dataSource.MigrationDataSource;
-import com.example.dibadgo.TheMigration.exceptions.LocalMigrationError;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

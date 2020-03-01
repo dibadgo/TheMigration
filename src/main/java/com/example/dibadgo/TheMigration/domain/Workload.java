@@ -30,7 +30,7 @@ public class Workload {
     private UUID id;
 
     /**
-     * IP address      *
+     * IP address
      * Will store in Cassandra
      */
     @CassandraType(type = DataType.Name.TEXT)
@@ -74,8 +74,6 @@ public class Workload {
 
     @NotNull
     public UUID getId() {
-        if (id == null)
-            id = UUID.randomUUID();
         return id;
     }
 

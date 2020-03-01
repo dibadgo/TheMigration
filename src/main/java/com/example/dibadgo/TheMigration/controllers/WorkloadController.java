@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,14 +47,28 @@ public class WorkloadController {
     }
 
     /**
-     * Create or update Workload
+     * Create Workload
      *
      * @param workload Workload model
      * @return Workload
      * @see Workload
      */
     @PostMapping
-    public ResponseEntity<Workload> saveWorkload(@RequestBody Workload workload) {
+    public ResponseEntity<Workload> createWorkload(@RequestBody Workload workload) {
+        Workload savedWorkload = workloadService.saveWorkload(workload);
+        return ResponseEntity.ok(savedWorkload);
+    }
+
+    /**
+     * Update Workload
+     *
+     * @param workload Workload model
+     * @return Workload
+     * @see Workload
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Workload> updateWorkload(@PathVariable UUID id, @RequestBody @NotNull Workload workload) {
+        workload.setId(id);
         Workload savedWorkload = workloadService.saveWorkload(workload);
         return ResponseEntity.ok(savedWorkload);
     }

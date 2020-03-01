@@ -42,7 +42,7 @@ public class MigrationController {
      * @return Migration model
      * @see MigrationBind
      */
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Migration> createMigration(@RequestBody MigrationBind bind) {
         return ResponseEntity.ok(migrationDataSource.create(bind));
     }
@@ -67,7 +67,7 @@ public class MigrationController {
      */
     @GetMapping("/run/{id}")
     public ResponseEntity<String> run(@PathVariable UUID id) {
-       migrationDataSource.run(id, taskExecutor);
+        migrationDataSource.run(id, taskExecutor);
 
         return ResponseEntity.ok("The migration process started. " +
                 "Check out migration/id method to observe on the status");

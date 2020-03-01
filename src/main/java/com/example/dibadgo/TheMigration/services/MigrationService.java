@@ -154,6 +154,11 @@ public class MigrationService implements MigrationDataSource {
         migrationRepository.deleteById(id);
     }
 
+    /**
+     * Make migration process in a background thread
+     * @param migrationId Migration Id
+     * @param taskExecutor Task pool executor
+     */
     @Override
     public void run(UUID migrationId, ThreadPoolTaskExecutor taskExecutor) {
         Migration migration = this.get(migrationId);
@@ -186,7 +191,7 @@ public class MigrationService implements MigrationDataSource {
 
         var migration = new Migration(
                 migrationBind.getMountPoints(),
-                source.getId(),
+                migrationBind.getSourceId(),
                 targetCloud,
                 migrationBind.getState(),
                 migrationBind.getOsType()

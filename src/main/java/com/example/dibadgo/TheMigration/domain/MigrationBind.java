@@ -54,6 +54,16 @@ public class MigrationBind {
 
     }
 
+    public MigrationBind(UUID sourceId, UUID targetId, Cloud targetCloud, Credentials cloudCredentials, String[] mountPoints, OsType osType, State state) {
+        this.sourceId = sourceId;
+        this.targetId = targetId;
+        this.targetCloud = targetCloud;
+        this.cloudCredentials = cloudCredentials;
+        this.mountPoints = mountPoints;
+        this.osType = osType;
+        this.state = state;
+    }
+
     /**
      * Source Id getter
      *

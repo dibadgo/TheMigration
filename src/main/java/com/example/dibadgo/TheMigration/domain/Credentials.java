@@ -1,6 +1,5 @@
 package com.example.dibadgo.TheMigration.domain;
 
-import org.springframework.data.cassandra.core.mapping.Table;
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import javax.validation.constraints.NotNull;

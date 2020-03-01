@@ -2,6 +2,8 @@ package com.example.dibadgo.TheMigration.domain;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * This model describes a volume
  */
@@ -30,8 +32,8 @@ public class Volume {
      * @param mountPoint Mount point
      * @param totalSize  Total size (Gigabytes)
      */
-    public Volume(String mountPoint, int totalSize) {
-        this.mountPoint = mountPoint;
+    public Volume(@NotNull String mountPoint, int totalSize) {
+        this.mountPoint = mountPoint.toLowerCase();
         this.totalSize = totalSize;
     }
 
@@ -49,8 +51,8 @@ public class Volume {
      *
      * @param mountPoint Mount volume
      */
-    public void setMountPoint(String mountPoint) {
-        this.mountPoint = mountPoint;
+    public void setMountPoint(@NotNull String mountPoint) {
+        this.mountPoint = mountPoint.toLowerCase();
     }
 
     /**
