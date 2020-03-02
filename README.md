@@ -1,12 +1,12 @@
-# Hi, Welcome to project "The migration"
+# Welcome to the project "The migration"
 
 ----
 ## What is it? 
 
 This is a project created to demonstrate programming skills in Java. Framework - Spring Boot.
 
----
-##This project includes
+
+## This project includes
 
 * REST API
 * Persistence layer based on Cassandra
@@ -16,11 +16,12 @@ This is a project created to demonstrate programming skills in Java. Framework -
 * Postman collection to make using the project easier
 
 
----
-##Dependencies:
-1. Cassandra DB, [link] (http://cassandra.apache.org/)
+## Dependencies:
+1. Cassandra DB, [link](http://cassandra.apache.org/)
+2. Java 11
+3. Web server (optional)
 
-**That's all!**
+**That's all**
 
 ---
 # Structure of REST API:
@@ -31,9 +32,9 @@ The REST API includes a couple of namspaces:
 
 **/workload** - manage workloads entities
 
-By the way, do you use [Postman] (https://www.postman.com/)? 
-Let's download a collection from [here] (https://www.getpostman.com/collections/09a26ad29450289d344c)
-and play with that easer.
+By the way, do you use [Postman](https://www.postman.com/)? 
+Let's download a Postman collection from [here](https://drive.google.com/open?id=1_ZtkTM4GN_wXyeXKvsF4y73cJaG-0EC8)
+and play with REST API easer.
 
 
 ## API description:
@@ -103,10 +104,6 @@ Remove the migration by id
    
 Response body: String message
     
-# TODO
-Errors:
-Examples:
-
 ---
 ## Models
 
@@ -185,3 +182,70 @@ Examples:
         "endTime": null,
         "errorMessage": null
     }
+**Error model**
+
+All ***expectable*** errors like 400 Bad Requst or 404 Not Found have a predictable response body. This greatly simplifies the process of integration with the server.
+
+    { 
+   	"message": "Something went wrong"
+    }
+
+---
+## Examples:
+
+First let's create a couple of workloads with IP's ***192.168.0.1*** and ***192.168.0.2*** (source and target Workloads) and a couple of volumes in the source.
+
+Make a REST call ***POST /workload*** with body for source
+
+    {        
+        "ipAddress": "192.168.0.1",
+        "credentials": {
+		"username": "User",
+		"password": "pass",
+		"domain": "/"
+        },
+        "volumeList": [{
+		"mountPoint": "c:",
+		"totalSize": 1777
+        }, {
+		"mountPoint": "d:",
+		"totalSize": 2000
+        }]
+    }
+    
+and let's make a REST call for target:
+
+    {        
+       "ipAddress": "192.168.0.2",
+       "credentials": {
+                "username": "User",
+                "password": "pass",
+                "domain": "/"
+        },
+        "volumeList": []
+    }
+    
+Second step is create a migration based on those workloads. Make a REST call to ***POST /migration*** with body    
+
+    {
+        "sourceWorkloadIp": "192.168.0.1",
+        "targetWorkloadIp": "192.168.0.2",
+        "targetCloud": "AWS",
+        "cloudCredentials": {
+            "password": "pass",
+            "domain": "/",
+            "useName": "User"
+        },
+        "mountPoints": ["C:"],
+        "osType": "WINDOWS"
+    }
+
+In this case only the **C:** drive is selected, that means migration will copy to target Workload **C:** drive only from the source.
+
+Third let's start the migration by Id, take a migration's Id and call the method: ***GET /migration/run/{migrationId}***
+
+At this point the migration started and you are able to check the migration logs in STD output or just make a REST call to ***GET /migration/{migrationId}*** and ckeck the status.
+
+So, that's all
+
+**Created by Artyom Arabadzhiyan**
