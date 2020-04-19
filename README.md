@@ -1,12 +1,8 @@
-# Welcome to the project "The migration"
+# The migration
 
+This is a sample project created to demonstrate programming skills in Java. Framework - Spring Boot.
 
-## What is it? 
-
-This is a project created to demonstrate programming skills in Java. Framework - Spring Boot.
-
-
-## This project includes
+## The Project includes
 
 * REST API
 * Persistence layer based on Cassandra
