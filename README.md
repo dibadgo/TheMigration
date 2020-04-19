@@ -1,6 +1,6 @@
 # Welcome to the project "The migration"
 
-----
+
 ## What is it? 
 
 This is a project created to demonstrate programming skills in Java. Framework - Spring Boot.
@@ -23,7 +23,6 @@ This is a project created to demonstrate programming skills in Java. Framework -
 
 **That's all**
 
----
 # Structure of REST API:
 
 The REST API includes a couple of namspaces:
@@ -104,7 +103,7 @@ Remove the migration by id
    
 Response body: String message
     
----
+
 ## Models
 
 **Workload model**
@@ -190,7 +189,7 @@ All ***expectable*** errors like 400 Bad Requst or 404 Not Found have a predicta
    	"message": "Something went wrong"
     }
 
----
+
 ## Examples:
 
 First let's create a couple of workloads with IP's ***192.168.0.1*** and ***192.168.0.2*** (source and target Workloads) and a couple of volumes in the source.
